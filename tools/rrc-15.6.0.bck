@@ -908,12 +908,7 @@ SIB1 ::=        SEQUENCE {
     useFullResumeID                     ENUMERATED {true}                                               OPTIONAL,   -- Need N
 
     lateNonCriticalExtension            OCTET STRING                                                    OPTIONAL,
-    nonCriticalExtension                SIB1-vExt-IEs                                                   OPTIONAL
-}
-
-SIB1-vExt-IEs ::=                   SEQUENCE {  -- for signature
-  timestampBE  OCTET STRING (SIZE(8)),        -- uint64, big-endian (네트워크 바이트오더)
-  signature    OCTET STRING (SIZE(1..512))    -- Ed25519면 64B, 여유는 512B로
+    nonCriticalExtension                SEQUENCE{}                                                      OPTIONAL
 }
 
 UAC-AccessCategory1-SelectionAssistanceInfo ::=    ENUMERATED {a, b, c}
