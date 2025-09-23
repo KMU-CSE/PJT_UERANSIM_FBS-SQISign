@@ -5,7 +5,7 @@
  * 	`asn1c -fcompound-names -pdu=all -findirect-choice -fno-include-deps -gen-PER -no-gen-OER -no-gen-example -D rrc`
  */
 
-#include "SIB1-vExt-IEs.h"
+#include "ASN_RRC_SIB1-vExt-IEs.h"
 
 static int
 memb_timestampBE_constraint_1(const asn_TYPE_descriptor_t *td, const void *sptr,
@@ -70,7 +70,7 @@ static asn_per_constraints_t asn_PER_memb_signature_constr_3 CC_NOTUSED = {
 	0, 0	/* No PER value map */
 };
 asn_TYPE_member_t asn_MBR_SIB1_vExt_IEs_1[] = {
-	{ ATF_NOFLAGS, 0, offsetof(struct SIB1_vExt_IEs, timestampBE),
+	{ ATF_NOFLAGS, 0, offsetof(struct ASN_RRC_SIB1_vExt_IEs, timestampBE),
 		(ASN_TAG_CLASS_CONTEXT | (0 << 2)),
 		-1,	/* IMPLICIT tag at current level */
 		&asn_DEF_OCTET_STRING,
@@ -79,7 +79,7 @@ asn_TYPE_member_t asn_MBR_SIB1_vExt_IEs_1[] = {
 		0, 0, /* No default value */
 		"timestampBE"
 		},
-	{ ATF_NOFLAGS, 0, offsetof(struct SIB1_vExt_IEs, signature),
+	{ ATF_NOFLAGS, 0, offsetof(struct ASN_RRC_SIB1_vExt_IEs, signature),
 		(ASN_TAG_CLASS_CONTEXT | (1 << 2)),
 		-1,	/* IMPLICIT tag at current level */
 		&asn_DEF_OCTET_STRING,
@@ -97,8 +97,8 @@ static const asn_TYPE_tag2member_t asn_MAP_SIB1_vExt_IEs_tag2el_1[] = {
     { (ASN_TAG_CLASS_CONTEXT | (1 << 2)), 1, 0, 0 } /* signature */
 };
 asn_SEQUENCE_specifics_t asn_SPC_SIB1_vExt_IEs_specs_1 = {
-	sizeof(struct SIB1_vExt_IEs),
-	offsetof(struct SIB1_vExt_IEs, _asn_ctx),
+	sizeof(struct ASN_RRC_SIB1_vExt_IEs),
+	offsetof(struct ASN_RRC_SIB1_vExt_IEs, _asn_ctx),
 	asn_MAP_SIB1_vExt_IEs_tag2el_1,
 	2,	/* Count of tags in the map */
 	0, 0, 0,	/* Optional elements (not needed) */

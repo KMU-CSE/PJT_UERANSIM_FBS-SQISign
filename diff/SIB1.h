@@ -50,7 +50,7 @@ struct ConnEstFailureControl;
 struct SI_SchedulingInfo;
 struct ServingCellConfigCommonSIB;
 struct UE_TimersAndConstants;
-struct SIB1_vExt_IEs;
+struct ASN_RRC_SIB1_vExt_IEs;
 struct UAC_BarringPerCatList;
 struct UAC_BarringPerPLMN_List;
 
@@ -98,7 +98,7 @@ typedef struct SIB1 {
 	} *uac_BarringInfo;
 	long	*useFullResumeID	/* OPTIONAL */;
 	OCTET_STRING_t	*lateNonCriticalExtension	/* OPTIONAL */;
-	struct SIB1_vExt_IEs	*nonCriticalExtension	/* OPTIONAL */;
+	struct ASN_RRC_SIB1_vExt_IEs	*nonCriticalExtension	/* OPTIONAL */;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;

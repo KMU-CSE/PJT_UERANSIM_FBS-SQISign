@@ -5,8 +5,8 @@
  * 	`asn1c -fcompound-names -pdu=all -findirect-choice -fno-include-deps -gen-PER -no-gen-OER -no-gen-example -D rrc`
  */
 
-#ifndef	_SIB1_vExt_IEs_H_
-#define	_SIB1_vExt_IEs_H_
+#ifndef	_ASN_RRC_SIB1_vExt_IEs_H_
+#define	_ASN_RRC_SIB1_vExt_IEs_H_
 
 
 #include <asn_application.h>
@@ -20,13 +20,13 @@ extern "C" {
 #endif
 
 /* SIB1-vExt-IEs */
-typedef struct SIB1_vExt_IEs {
+typedef struct ASN_RRC_SIB1_vExt_IEs {
 	OCTET_STRING_t	 timestampBE;
 	OCTET_STRING_t	 signature;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
-} SIB1_vExt_IEs_t;
+} ASN_RRC_SIB1_vExt_IEs_t;
 
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_SIB1_vExt_IEs;
@@ -37,5 +37,5 @@ extern asn_TYPE_member_t asn_MBR_SIB1_vExt_IEs_1[2];
 }
 #endif
 
-#endif	/* _SIB1_vExt_IEs_H_ */
+#endif	/* _ASN_RRC_SIB1_vExt_IEs_H_ */
 #include <asn_internal.h>

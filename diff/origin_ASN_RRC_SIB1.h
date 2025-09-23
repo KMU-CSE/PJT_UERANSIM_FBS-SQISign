@@ -50,6 +50,7 @@ struct ASN_RRC_ConnEstFailureControl;
 struct ASN_RRC_SI_SchedulingInfo;
 struct ASN_RRC_ServingCellConfigCommonSIB;
 struct ASN_RRC_UE_TimersAndConstants;
+struct ASN_RRC_SIB1_vExt_IEs;
 struct ASN_RRC_UAC_BarringPerCatList;
 struct ASN_RRC_UAC_BarringPerPLMN_List;
 
@@ -97,11 +98,7 @@ typedef struct ASN_RRC_SIB1 {
 	} *uac_BarringInfo;
 	long	*useFullResumeID;	/* OPTIONAL */
 	OCTET_STRING_t	*lateNonCriticalExtension;	/* OPTIONAL */
-	struct ASN_RRC_SIB1__nonCriticalExtension {
-		
-		/* Context for parsing across buffer boundaries */
-		asn_struct_ctx_t _asn_ctx;
-	} *nonCriticalExtension;
+	struct ASN_RRC_SIB1_vExt_IEs	*nonCriticalExtension	/* OPTIONAL */;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
