@@ -17,11 +17,17 @@
 #include <asn/rrc/ASN_RRC_MIB.h>
 #include <asn/rrc/ASN_RRC_PLMN-IdentityInfo.h>
 #include <asn/rrc/ASN_RRC_PLMN-IdentityInfoList.h>
+#include <asn/rrc/ASN_RRC_SIB1-vExt-IEs.h>
 #include <asn/rrc/ASN_RRC_SIB1.h>
 #include <asn/rrc/ASN_RRC_UAC-BarringInfoSet.h>
 #include <asn/rrc/ASN_RRC_UAC-BarringInfoSetIndex.h>
 #include <asn/rrc/ASN_RRC_UAC-BarringPerCat.h>
 #include <asn/rrc/ASN_RRC_UAC-BarringPerCatList.h>
+
+extern "C"
+{
+#include "ext/compact25519/c25519/edsign.h"
+}
 
 namespace nr::gnb
 {
@@ -111,6 +117,47 @@ void GnbRrcTask::triggerSysInfoBroadcast()
 {
     auto *mib = ConstructMibMessage(m_isBarred, m_intraFreqReselectAllowed);
     auto *sib1 = ConstructSib1Message(m_cellReserved, m_config->tac, m_config->nci, m_config->plmn, m_aiBarringSet);
+
+    //! 서명 생성 및 삽입 ######################
+    // (A) 서명용 코어 인코딩
+    OctetString mib_bytes = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_BCH_Message, mib);
+    OctetString sib1_core = rrc::encode::EncodeS(asn_DEF_ASN_RRC_BCCH_DL_SCH_Message, sib1);
+
+    // (B) TS 만들고 서명
+    // 8바이트 big-endian timestamp: utils::CurrentTimeStamp() 사용
+    uint64_t ts_val = (uint64_t)utils::CurrentTimeStamp().ntpValue(); // 64비트 NTP 타임
+    uint8_t ts_be[8];
+    for (int i = 0; i < 8; i++)
+    {
+        ts_be[7 - i] = (ts_val >> (i * 8)) & 0xFF;
+    }
+
+    // msg = APER(MIB) || APER(SIB1_core) || TS(8B)
+    std::vector<uint8_t> msg;
+    msg.insert(msg.end(), mib_bytes.data(), mib_bytes.data() + mib_bytes.length());
+    msg.insert(msg.end(), sib1_core.data(), sib1_core.data() + sib1_core.length());
+    msg.insert(msg.end(), ts_be, ts_be + 8);
+
+    // edsign 서명
+    // gNB 시크릿키 (32B)
+    static const uint8_t GNB_SECRET[32] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22,
+                                           0x22, 0x22, 0x22, 0x22, 0x22, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33,
+                                           0x33, 0x33, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44};
+    // gNB 공개키(32B)
+    static const uint8_t GNB_PUB[32] = {0x64, 0xE7, 0x78, 0x2E, 0x29, 0xF2, 0x21, 0x99, 0x99, 0x66, 0x4E,
+                                        0x16, 0x3F, 0xD6, 0xAD, 0xBB, 0x80, 0xCF, 0xBA, 0xE5, 0xAD, 0x86,
+                                        0xA2, 0x85, 0xA3, 0x86, 0x40, 0x5A, 0x70, 0x20, 0x10, 0x61};
+    uint8_t sig[64];
+    edsign_sign(sig, GNB_PUB, GNB_SECRET, msg.data(), msg.size());
+
+    // (C) SIB1에 주입 (이제 구조체 상태가 “최종”)
+    auto &sib1_ie = *sib1->message.choice.c1->choice.systemInformationBlockType1;
+    asn::MakeNew(sib1_ie.nonCriticalExtension);
+    OctetString ts_os(std::vector<uint8_t>(ts_be, ts_be + sizeof(ts_be)));
+    asn::SetOctetString(sib1_ie.nonCriticalExtension->timestampBE, ts_os);
+    OctetString sig_os(std::vector<uint8_t>(sig, sig + sizeof(sig)));
+    asn::SetOctetString(sib1_ie.nonCriticalExtension->signature, sig_os);
+    //! ###########################################
 
     sendRrcMessage(mib);
     sendRrcMessage(sib1);
